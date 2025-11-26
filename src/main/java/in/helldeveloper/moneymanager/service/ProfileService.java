@@ -13,6 +13,7 @@ import java.util.UUID;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
+    private final EmailService emailService;
 
     public ProfileDTO registerProfile(ProfileDTO profileDTO) {
 
@@ -20,6 +21,12 @@ public class ProfileService {
         newProfile.setActivationToken(UUID.randomUUID().toString());
 
         newProfile = profileRepository.save(newProfile);
+
+        //Send activation email
+        String activationLink = "http://localhost:8080/api/v1.0/activate?token=" + newProfile.getActivationToken();
+        String subject = "Activate Your Account";
+        String body = "Click on the following link to active your account: " + activationLink;
+        emailService.sendMail(newProfile.getEmail(), subject, body);
 
         return toDTO(newProfile);
     }
