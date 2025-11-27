@@ -1,5 +1,6 @@
 package in.helldeveloper.moneymanager.config;
 
+import in.helldeveloper.moneymanager.security.JwtRequestFilter;
 import in.helldeveloper.moneymanager.service.AppUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

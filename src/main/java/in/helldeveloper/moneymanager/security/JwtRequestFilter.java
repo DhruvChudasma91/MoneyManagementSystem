@@ -1,4 +1,4 @@
-package in.helldeveloper.moneymanager.config;
+package in.helldeveloper.moneymanager.security;
 
 import in.helldeveloper.moneymanager.util.JwtUtil;
 import jakarta.servlet.FilterChain;
