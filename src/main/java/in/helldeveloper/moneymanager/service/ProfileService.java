@@ -93,7 +93,7 @@ public class ProfileService {
         if(email == null) {
             currentUser = getCurrentProfile();
         } else {
-            profileRepository.findByEmail(email)
+            currentUser = profileRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("Profile not found with email: " + email));
         }
 
