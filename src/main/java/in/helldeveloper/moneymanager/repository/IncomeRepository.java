@@ -1,6 +1,5 @@
 package in.helldeveloper.moneymanager.repository;
 
-import in.helldeveloper.moneymanager.entity.ExpenseEntity;
 import in.helldeveloper.moneymanager.entity.IncomeEntity;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
