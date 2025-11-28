@@ -11,6 +11,9 @@ import in.helldeveloper.moneymanager.repository.IncomeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class IncomeService {
@@ -28,6 +31,32 @@ public class IncomeService {
         IncomeEntity newIncome = toEntity(incomeDTO, profile, category);
         newIncome = incomeRepository.save(newIncome);
         return toDTO(newIncome);
+    }
+
+    //Retrieves all incomes for current month based on start and end date
+    public List<IncomeDTO> getCurrentMonthIncomesForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startDate = currentDate.withDayOfMonth(1);
+        LocalDate endDate = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
+
+        List<IncomeEntity> incomes = incomeRepository.findByProfileIdAndDateBetween(profile.getId(), startDate, endDate);
+
+        return incomes.stream().map(this::toDTO).toList();
+    }
+
+    //Delete expense by id for current user.
+    public void deleteIncome(Long incomeId) {
+
+        ProfileEntity profile = profileService.getCurrentProfile();
+        IncomeEntity entity = incomeRepository.findById(incomeId)
+                .orElseThrow(() -> new RuntimeException("Expense not found"));
+
+        if(!entity.getProfile().getId().equals(profile.getId())) {
+            throw new RuntimeException("Unauthorized to delete this income");
+        }
+        incomeRepository.delete(entity);
     }
 
     private IncomeEntity toEntity(IncomeDTO dto, ProfileEntity profile, CategoryEntity category) {

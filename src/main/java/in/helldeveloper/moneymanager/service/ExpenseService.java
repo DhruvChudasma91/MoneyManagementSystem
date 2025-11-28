@@ -9,6 +9,9 @@ import in.helldeveloper.moneymanager.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ExpenseService {
@@ -26,6 +29,33 @@ public class ExpenseService {
         ExpenseEntity newExpense = toEntity(expenseDTO, profile, category);
         newExpense = expenseRepository.save(newExpense);
         return toDTO(newExpense);
+    }
+
+    //Retrieves all expenses for current month based on start and end date
+    public List<ExpenseDTO> getCurrentMonthExpensesForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startDate = currentDate.withDayOfMonth(1);
+        LocalDate endDate = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
+
+        List<ExpenseEntity> expenses = expenseRepository.findByProfileIdAndDateBetween(profile.getId(), startDate, endDate);
+
+        return expenses.stream().map(this::toDTO).toList();
+
+    }
+
+    //Delete expense by id for current user.
+    public void deleteExpense(Long expenseId) {
+
+        ProfileEntity profile = profileService.getCurrentProfile();
+        ExpenseEntity entity = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new RuntimeException("Expense not found"));
+
+        if(!entity.getProfile().getId().equals(profile.getId())) {
+            throw new RuntimeException("Unauthorized to delete this expense");
+        }
+        expenseRepository.delete(entity);
     }
 
     //helper methods
