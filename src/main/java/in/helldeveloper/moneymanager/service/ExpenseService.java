@@ -7,6 +7,7 @@ import in.helldeveloper.moneymanager.entity.ProfileEntity;
 import in.helldeveloper.moneymanager.repository.CategoryRepository;
 import in.helldeveloper.moneymanager.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -76,6 +77,14 @@ public class ExpenseService {
         BigDecimal totalExpenses = expenseRepository.findTotalExpenseByProfileId(profile.getId());
 
         return totalExpenses != null ? totalExpenses : BigDecimal.ZERO;
+    }
+
+    //filter expenses
+    public List<ExpenseDTO> filterExpenses(LocalDate start, LocalDate end, String keyword, Sort sort) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<ExpenseEntity> expenses = expenseRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(profile.getId(), start, end, keyword, sort);
+
+        return  expenses.stream().map(this::toDTO).toList();
     }
 
     //helper methods

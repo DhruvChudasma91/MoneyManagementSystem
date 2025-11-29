@@ -9,6 +9,7 @@ import in.helldeveloper.moneymanager.entity.ProfileEntity;
 import in.helldeveloper.moneymanager.repository.CategoryRepository;
 import in.helldeveloper.moneymanager.repository.IncomeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -69,13 +70,20 @@ public class IncomeService {
         return incomes.stream().map(this::toDTO).toList();
     }
 
-    //Get total expenses for current user
+    //Get total incomes for current user
     public BigDecimal getTotalIncomesForCurrentUser() {
         ProfileEntity profile = profileService.getCurrentProfile();
 
         BigDecimal totalIncomes = incomeRepository.findTotalIncomesByProfileId(profile.getId());
 
         return totalIncomes != null ? totalIncomes : BigDecimal.ZERO;
+    }
+
+    //filter incomes
+    public List<IncomeDTO> filterIncomes(LocalDate start, LocalDate end, String keyword, Sort sort) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<IncomeEntity> incomes = incomeRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(profile.getId(), start, end, keyword, sort);
+        return  incomes.stream().map(this::toDTO).toList();
     }
 
     private IncomeEntity toEntity(IncomeDTO dto, ProfileEntity profile, CategoryEntity category) {
