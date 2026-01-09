@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,26 @@ public class EmailService {
                 """.formatted(fullName, activationUrl);
 
         sendMail(to, "Activate your Money Manager account", body);
+    }
+
+    public void sendEmailWithAttachment(String to, String subject, String body, byte[] attachment,String filename) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setFrom(fromEmail);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(body);
+
+            // Attach Excel file
+            ByteArrayResource resource = new ByteArrayResource(attachment);
+            helper.addAttachment(filename, resource);
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send email with attachment", e);
+        }
     }
 
 
