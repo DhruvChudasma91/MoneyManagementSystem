@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping("/expenses")
 public class ExpenseController {
 
