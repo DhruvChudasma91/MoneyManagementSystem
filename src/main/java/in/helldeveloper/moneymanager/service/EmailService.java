@@ -54,4 +54,5 @@ public class EmailService {
         sendMail(to, "Activate your Money Manager account", body);
     }
 
+
 }
