@@ -2,6 +2,7 @@ package in.helldeveloper.moneymanager.controller;
 
 import in.helldeveloper.moneymanager.dto.AuthDTO;
 import in.helldeveloper.moneymanager.dto.ProfileDTO;
+import in.helldeveloper.moneymanager.entity.ProfileEntity;
 import in.helldeveloper.moneymanager.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,12 @@ public class ProfileController {
                     "message", e.getMessage()
             ));
         }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ProfileDTO> getCurrentProfile() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        return ResponseEntity.ok(profileService.toDTO(profile));
     }
 
 }
